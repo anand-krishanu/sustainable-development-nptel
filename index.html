@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ESD Exam Prep</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+      .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+      const CREATOR_NAME = "Krishanu Anand";
+      const LINKEDIN_URL = "https://www.linkedin.com/in/krishanu-anand/";
+      const GITHUB_URL = "https://github.com/anand-krishanu";
+
+      const quizData = [
+        { q: "The Global Goals were adopted by all United Nations member states in ___ as a universal call to action to end poverty, protect the planet and ensure that all people enjoy peace and prosperity by ___.", options: ["2025, 2080", "2020, 2060", "2012, 2050", "2015, 2030"], answer: 3 },
+        { q: "Which of the following is true?", options: ["The SDGs are a bold commitment to solely increase the GDP of India", "Dealing with climate change has no impact on gender equality", "Success in one SDG affects success of the others", "Only 14 out of the 17 SDGs are interconnected"], answer: 2 },
+        { q: "In June 1992, at the Earth Summit in Rio de Janeiro, Brazil, more than 178 countries adopted", options: ["Agenda 21", "Millennium Development Goals", "Agenda 51", "Sustainable Development Goals"], answer: 0 },
+        { q: "Brundtland Report was released in 1987 by the WCED. WCED stands for", options: ["World Commission on Environment Degradation", "World Commission on Environment and Development", "World Committee on Environmental Depletion", "World Commission on Earth Development"], answer: 1 },
+        { q: "Extreme poverty means living on less than ___ a day.", options: ["$1.25", "$4.25", "$10.25", "$100.25"], answer: 0 },
+        { q: "___ poverty measures reveal who is poor and how they are poor.", options: ["Unidimensional", "Bidirectional", "Multidimensional", "Multidirectional"], answer: 2 },
+        { q: "SDG 2 aims end all forms of ___ by 2030.", options: ["crime", "hunger and malnutrition", "pollution", "drought"], answer: 1 },
+        { q: "Which of the following is not one of the indicators of the Global Hunder Index?", options: ["prevalence of wasting and stunting in children under 5 years", "under 5 child mortality rate", "proportion of undernourished in the population", "proportion of obese people in the population"], answer: 3 },
+        { q: "As per Ministry of Housing and Urban Affairs, 135 litre per capita per day (Ipcd) has been suggested as the benchmark for urban water supply. For rural areas, a minimum service delivery of 55 Ipcd has been fixed under", options: ["Jal Jeevan Mission", "Jal Shakti Mission", "Jal Protection Mission", "Jal Janta Mission"], answer: 0 },
+        { q: "Forests cover about ___ percent of the Earth's surface", options: ["5", "85", "30", "50"], answer: 2 },
+
+        { q: "Which of the following is a characteristic of ESD as described in the framework?", options: ["It is not locally relevant", "It promotes learning only for children", "It is interdisciplinary", "It uses only two pedagogical techniques"], answer: 2 },
+        { q: "The Declaration on the Right to Development (1986) established that everyone is entitled to participate in and enjoy:", options: ["only economic and social development", "economic, political, psychological and communist development", "economic, social, cultural and political development", "only cultural development"], answer: 2 },
+        { q: "Text based methods for assessing ESD programs can be improved by using", options: ["interpretive methodologies", "strict curriculum", "only quantitative techniques", "only qualitative methods"], answer: 0 },
+        { q: "SDGS are for the following except", options: ["people", "practice", "planet", "partnership"], answer: 1 },
+        { q: "Policies like employment and labor rights, care and family leves, and financial regulation are often called the ___ policies.", options: ["post-regulation", "self-care", "forceful", "pre-distributive"], answer: 3 },
+        { q: "Which of the following is involved in the development of the HRE indicator framework to measure progress on national implementation of human rights education.", options: ["Danish Institute of Human Rights", "The Office of the High Commissioner for Human Rights", "Both A and B", "Neither A nor B"], answer: 2 },
+        { q: "___ plays a role in peace education.", options: ["schools", "parents", "community", "all the given"], answer: 3 },
+        { q: "The enterprise of education at its most profound level is", options: ["discriminatory", "selective", "restricted", "transformative"], answer: 3 },
+        { q: "UNESCO's World in 2030 survey revealed that respondents see ___ as one of the top global challenges", options: ["climate change", "hunger", "unemployment", "mental health"], answer: 0 },
+        { q: "Education for sustainable development and peace develops people's skills to take actions that improve our quality of life", options: ["only now", "only for the future", "for now and for the future", "only for the past"], answer: 2 },
+
+        { q: "Global citizenship is a belief that individuals are members of ___ networks.", options: ["multiple", "diverse", "local and non-local", "all of the given"], answer: 3 },
+        { q: "A global citizen", options: ["is not aware of the wider world", "is confused about their place in the world", "takes an active role in their community", "do not care much about the planet"], answer: 2 },
+        { q: "Global citizenship education is based on ___ domains of learning.", options: ["three", "two", "four", "seven"], answer: 0 },
+        { q: "___ is UNESCO's first Categogory 1 education-releated institute in the Asia-Pacific region.", options: ["MGEIN", "MGIER", "MGIEP", "MGOEL"], answer: 2 },
+        { q: "SDG target 4.7 rearticulates a ___ agenda for education.", options: ["regional", "behavioral", "political", "humanistic"], answer: 3 },
+        { q: "SEL stands for", options: ["Sustainable education and learning", "Social and environmental learning", "Social and emotional learning", "Sustainable and economic learning"], answer: 2 },
+        { q: "Which of the following is a role taken by a teacher in education for sustainable development?", options: ["facilitator", "guide", "role model", "all of the given"], answer: 3 },
+        { q: "Target ___ calls for strengthening efforts to protect and safeguard the world's cultural and natural heritage.", options: ["9.5", "1.5", "2.3", "11.4"], answer: 3 },
+        { q: "The UNESCO International Centre for Technical and Vocational Education and Training enables ___ in member states.", options: ["green TVET", "blue TVET", "orange TVET", "white TVET"], answer: 0 },
+        { q: "Which of the following statements is not true?", options: ["green jobs contribute to preserving environmental quality", "green jobs ensure workers' rights", "green jobs are only found in the agriculture sector", "green jobs must be accessible to all"], answer: 2 },
+
+        { q: "GESO stands for", options: ["Green Education for Sustainable Occupation", "Green Enhanced Sustainable Occupation", "Green Enhanced Skills Occupation", "None of the above"], answer: 2 },
+        { q: "The classification of occupations into GIDO, GESO and GNEO is given by US National Center for", options: ["G*NET", "A*NET", "I*NET", "O*NET"], answer: 3 },
+        { q: "The International Framework for Greening TVET consists of the following tiers, except", options: ["Breaking TVET institutions", "Transforming TVET institutions", "Formulating National Policies", "Forming International Alliance"], answer: 0 },
+        { q: "Energy, water and waste management comes under the ___ dimension of Greening TVET.", options: ["Green research", "Green culture", "Green teaching", "Green campus"], answer: 3 },
+        { q: "Industry-institute interaction is an indicator of", options: ["green house", "green teaching", "green campus", "green curriculum"], answer: 3 },
+        { q: "Sustainable entrepreneurship includes", options: ["social entrepreneurship", "eco-preneurship", "intra-preneurship", "all of the given"], answer: 3 },
+        { q: "ESD requires ___ learning methods.", options: ["participatory", "passive", "rigid", "static"], answer: 0 },
+        { q: "Which of the following is a transversal competency?", options: ["creativity", "empathy", "systems thinking", "all of the given"], answer: 3 },
+        { q: "___ is the ability to create good relationships and adapt to different social situations.", options: ["emotional fitness", "mental health", "social health", "physical health"], answer: 2 },
+        { q: "Sustainable health is", options: ["a curative approach", "only about the body", "a balance of mind, body and spirit", "only about mental health"], answer: 2 },
+
+        { q: "Siddha comes under the", options: ["public health sector", "voluntary health agencies", "indigenous system of medicine", "private health sector"], answer: 2 },
+        { q: "Which of the following is not a problem of healthcare infrastructure in India?", options: ["shortage of staff", "skewed favor to urban areas", "no proper regulatory mechanism", "standard procedures in all regions"], answer: 3 },
+        { q: "Which of the following is a health system building block as suggested by WHO?", options: ["Economic growth", "Access to public transport", "Politics", "Service delivery"], answer: 3 },
+        { q: "An ecologically sustainable approach broadens the definition of", options: ["objective", "outcome", "cost", "value"], answer: 3 },
+        { q: "A ___ is an environment in which data of medical interest can be stored and made easily available.", options: ["health repository", "health bank", "health bag", "health grid"], answer: 3 },
+        { q: "The POSHAN Abhiyan in India aims to improve nutritional outcomes for", options: ["children", "lactating mothers", "pregnant women", "all of the given"], answer: 3 },
+        { q: "Sus-QI stands for", options: ["Sustainable quality improvement", "Sustainable quality improvisation", "Sustainable quantity improvement", "Sustainable quantity improvisation"], answer: 0 },
+        { q: "Which of the following is not a stage of Sus-QI?", options: ["set goals", "measure impacts", "design the improvement effort", "ignore the system"], answer: 3 },
+        { q: "Food insecurity is measured on the", options: ["FIES", "FAIS", "FIET", "FAIR"], answer: 0 },
+        { q: "The UN lists ___ levels of food security for any given country.", options: ["5", "4", "3", "2"], answer: 0 },
+
+        { q: "Poor infrastructure can cause hunger in a country.", options: ["True", "False"], answer: 0 },
+        { q: "In high income countries, hunger is mainly caused due to poverty that results from", options: ["low GDP of the country", "lack of access to food", "poor public transport infrastructure", "lack of jobs"], answer: 3 },
+        { q: "Which of the following is true about hunger?", options: ["It is a cause of war", "It is an effect of war", "It is both a cause and effect of war", "It is neither a cause nor an effect of war"], answer: 2 },
+        { q: "___ are most vulnerable to the harmful effects of hidden hunger.", options: ["adults", "infants", "adolescents", "elderly"], answer: 1 },
+        { q: "Desertification is typically a result of", options: ["drought", "deforestation", "inappropriate agriculture", "all of the given"], answer: 3 },
+        { q: "Which of the following is a key initiative in India for the problem of hunger?", options: ["One Nation, One Plate", "One Nation, One Hunger", "One Nation, No Ration Card", "One Nation, One Ration Card"], answer: 3 },
+        { q: "In the past, MGNREGA has", options: ["decreased rural wages", "increased gender wage gaps", "enabled poor access to food", "reduced distress migration from rural areas"], answer: 3 },
+        { q: "Wheat productivity can suffer if", options: ["temperature rises", "temperature does not change", "temperature falls", "none of the given"], answer: 0 },
+        { q: "Bringing forgotten and neglected foods like yam into cultivation and onto the market is called", options: ["diversifying food basket", "restricting food basket", "completing food box", "wasting food basket"], answer: 0 },
+        { q: "Home gardening has been proven as a reliable source to supplement food and nutritional security at the household level.", options: ["True", "False"], answer: 0 },
+
+        { q: "Which of the following is a type of energy?", options: ["fossil fuels", "nuclear power", "traditional biomass", "all of the given"], answer: 3 },
+        { q: "In IPCC by UN, I stands for", options: ["Industrial", "Internal", "International", "Intergovernmental"], answer: 3 },
+        { q: "The extraction, transport and refinement of nuclear fuels results in", options: ["improvement of land from mining", "pollution of air and water", "replenishment of biodiversity", "all of the given"], answer: 1 },
+        { q: "The greatest contributor to air pollution in China is", options: ["cooking and heating", "coal burning", "transport", "forest burning"], answer: 1 },
+        { q: "In the wake of tsunami and nuclear disaster following severe earthquake in 2011, a city in Japan set a target for ___ by 2022.", options: ["hundred net energy", "one net energy", "million net energy", "zero net energy"], answer: 3 },
+        { q: "The term 'energy democracy' grew out of the ___ movement.", options: ["hunger justice", "hunger revolt", "climate revolt", "climate justice"], answer: 3 },
+        { q: "The Paris Agreement is a legally binding treaty on ___ adopted by 196 parties at COP 21 in 2015.", options: ["climate change", "education", "poverty", "none of the given"], answer: 0 },
+        { q: "The Government of India launched the NAPCC in 2008 outlining ___ National Missions on climate change.", options: ["8", "2", "100", "78"], answer: 0 },
+        { q: "Stubble burning usually takes place in the months of", options: ["October-November", "May-June", "January-February", "July-August"], answer: 0 },
+        { q: "Stubble burning is", options: ["intentional", "natural", "healthy for air quality", "related to burning of paper"], answer: 0 },
+
+        { q: "The Okayama Commitment is from", options: ["Russia", "South Korea", "North Korea", "Japan"], answer: 3 },
+        { q: "Which of the following is a policy support mechanism of Okayama Commitment?", options: ["Taking money", "Content development", "Exploitation of resources", "None of the given"], answer: 1 },
+        { q: "Education is related to SDG 9 such that", options: ["education helps in skills required to build resilient infrastructure", "education enhances skills to use natural resources more sustainably", "education is critical to lifting people out of poverty", "education helps reduce gender gaps"], answer: 0 },
+        { q: "The frame model structures sustainability competencies into ___ goal dimensions.", options: ["8", "3", "11", "45"], answer: 1 },
+        { q: "Sustainability issues must be looked at through a ___ approach.", options: ["isolated thinking", "independent thinking", "silos thinking", "systems thinking"], answer: 3 },
+        { q: "Technology and Science can alone solve all our sustainability problems.", options: ["True", "False"], answer: 1 },
+        { q: "GAP in the context of ESD stands for", options: ["Global Action Programme", "Great Actvity Plan", "Global Attention Programme", "Great Action Policy"], answer: 0 },
+        { q: "___ competency is the ability to understand and evaluate multiple futures.", options: ["anticipatory", "normative", "strategic", "collaborative"], answer: 0 },
+        { q: "The ability to question norms is ___ competency.", options: ["critical thinking", "normative", "anticipatory", "self-awareness"], answer: 0 },
+        { q: "Action-oriented learning draws on Kolb's concept of", options: ["experiential learning", "experimental learning", "rote learning", "direct learning"], answer: 0 },
+
+        { q: "Activities like fish bowl discussion help", options: ["passive thinking", "critical and reflexive thinking", "rote-memory", "all of the given"], answer: 1 },
+        { q: "Which of the following is not a vision-building exercise?", options: ["scenario analysis", "classroom teaching", "science fiction thinking", "dystopian storytelling"], answer: 1 },
+        { q: "The ability to hold contradictory thoughts and feelings is an ___ competency.", options: ["intellectual", "interpersonal", "intrapersonal", "institutional"], answer: 2 },
+        { q: "___ intelligences is proposed by Howard Gardner.", options: ["multiple", "singular", "double", "triple"], answer: 0 },
+        { q: "___ intelligence refers to using one's body in skilled ways.", options: ["kinesthetic", "musical", "naturalist", "spatial"], answer: 0 },
+        { q: "The idea of big transformation implies that changes in individual action are intertwined with", options: ["reorganization of self", "reorganization of societal structures", "ignorance of others", "none of the given"], answer: 1 },
+        { q: "In ___ learning, learners start to question all the things they knew to make room for new insights and information.", options: ["transformative", "transactional", "trivial", "trans-disciplinary"], answer: 0 },
+        { q: "Which of the following is a key principle of adult education?", options: ["need to know why", "guilt", "boredom", "none of the given"], answer: 0 },
+        { q: "___ Sustainable Development is a process through which people influence and share control over development initiatives, decisions and resources that affects them.", options: ["Internal", "Societal", "Participatory", "Transformational"], answer: 2 },
+        { q: "___ is the common regulatory body for higher education in India.", options: ["HECI", "WHO", "AIIMS", "None of the given"], answer: 0 },
+
+        { q: "Sustainable leaders look at immediate, short-term gains.", options: ["True", "False"], answer: 1 },
+        { q: "The need of the hour is to have leaders who", options: ["focus only on business profit", "focus only on building technical solutions", "take a holistic approach", "none of the given"], answer: 2 },
+        { q: "Which of the following is a part of the 3Ps of triple bottom line?", options: ["Profit", "Passion", "Party", "Pivot"], answer: 0 },
+        { q: "Organizations need leaders who create value for", options: ["internal stakeholders", "external stakeholders", "oneself", "all stakeholders"], answer: 3 },
+        { q: "The sustainability mindset involves", options: ["transparency", "presencing", "integrity", "all of the given"], answer: 3 },
+        { q: "Finding ways to maintain one's own and others' energy is an unsustainable leadership practice.", options: ["True", "False"], answer: 1 },
+        { q: "Systems thinking is often highlighted by the ability to", options: ["zoom in", "zoom out", "zoom in and out", "none of the given"], answer: 2 },
+        { q: "Practicing consciousness awareness includes", options: ["ignoring self with others", "forgetting about what has happened and moving on", "living in denial", "authentic interactions"], answer: 3 },
+        { q: "Leadership ___ is the last challenge of leadership; of letting go, moving on, and planning for one's own obsolescence.", options: ["succession", "regression", "formation", "integration"], answer: 0 },
+        { q: "___ leadership is also called missionary leadership and is different from quiet leadership.", options: ["participative", "servant", "radical", "inspirational"], answer: 2 },
+
+        { q: "There is one universal curriculum to become a sustainable leader.", options: ["True", "False"], answer: 1 },
+        { q: "A sustainable leader has a ___ decision-making style.", options: ["forceful", "autocratic", "selfish", "consensual"], answer: 3 },
+        { q: "A sustainable leader must have awareness of ___ contexts.", options: ["ecological", "economic", "political", "all of the given"], answer: 3 },
+        { q: "The 'results' component of sustainable leadership relates with the ___ dimension.", options: ["instituional", "social", "environmental", "economic"], answer: 3 },
+        { q: "India gives a theory U that consists of aspects like co-initiating, co-sensing and co-evolving among others.", options: ["HEAD", "SAID", "GEAD", "LEAD"], answer: 3 },
+        { q: "The ___ component in theory 'U' entails prototyping the new.", options: ["co-evolving", "co-initiating", "co-sensing", "co-creating"], answer: 3 },
+        { q: "Which of the following factor does not aid in becoming a global leader?", options: ["willingness to stay in one's comfort zone", "undesirable circumstances like poverty", "confidence to embrace risk", "willingness to learn from failure"], answer: 0 },
+        { q: "According to Maxwell, there are ___ levels of leadership.", options: ["15", "25", "50", "5"], answer: 3 },
+        { q: "The ___ in relation to their Global Leadership Fellowship program, describes global leaders as dynamic, engaged and driven individuals who possess a high degree of intellectual curiosity and service-oriented humility; an entrepreneur in the global public interest with a profound sense of purpose regardless of the scale and scope of the challenge.", options: ["World Health Organization", "World Labor Organization", "World Economic Forum", "World Political Forum"], answer: 2 },
+        { q: "SDG ___ is to make cities and human settlements inclusive, safe, resilient, and sustainable.", options: ["2", "10", "11", "5"], answer: 2 },
+
+        { q: "___ resources are those that exist in the absence of human intervention.", options: ["Artificial", "Natural", "Fake", "Real"], answer: 1 },
+        { q: "The food sector accounts for around ___ percent of total greenhouse gas emissions.", options: ["3", "22", "100", "90"], answer: 1 },
+        { q: "Which of the following is not a solution for natural resource depletion?", options: ["use less renewable energy", "promote sustainable fishing growth", "reduce food waste", "treat wastewater before discharging"], answer: 0 },
+        { q: "In order to support reform on green fiscal policy, UN Environment has established the ___ in partnership with the International Monetary Fund.", options: ["Green Fiscal Policy Network", "Blue Fiscal Policy Network", "Green Fishery Policy Network", "Green Fiscal Policy Natural"], answer: 0 },
+        { q: "As responsible consumers, we should ask ourselves \"___\" before buying anything.", options: ["do I really need it?", "how long will I use it?", "can I borrow it from someone I know?", "all of the given"], answer: 3 },
+        { q: "A bulb thrown out after usage forms", options: ["wet waste", "valuable waste", "responsible waste", "e-waste"], answer: 3 },
+        { q: "SDG ___ seeks to promote international trade, and help developing countries increase their exports to ensure a universal rules-based and equitable trading system that is fair, open and beneficial to all.", options: ["17", "2", "6", "11"], answer: 0 },
+        { q: "According to Gandhiji, wealth should be used for", options: ["the betterment of the humanity", "personal indulgence", "conflicts", "politics"], answer: 0 },
+        { q: "The ___ initiated and spearheaded by Gandhiji is the preeminent prototype of small and cottage industries. Strengthening village economy, and thus, reducing excessive urbanization can make human settlements safe, resilient and sustainable.", options: ["Khadi Movement", "Salt March", "Cotton Movement", "Non-violent Protest"], answer: 0 },
+        { q: "___ is the ability of a system to absorb disturbances & retain its basic function and structure.", options: ["resilience", "gratitude", "mindfulness", "sustainable consumption"], answer: 0 }
+      ];
+
+      function App() {
+        const [started, setStarted] = useState(false);
+        const [mode, setMode] = useState(null);
+        const [questionOrder, setQuestionOrder] = useState([]);
+        const [current, setCurrent] = useState(0);
+        const [answers, setAnswers] = useState({});
+        const [submitted, setSubmitted] = useState(false);
+        const [sidebarOpen, setSidebarOpen] = useState(true);
+
+        useEffect(() => {
+          const handleResize = () => {
+            setSidebarOpen(window.innerWidth >= 768);
+          };
+          window.addEventListener("resize", handleResize);
+          handleResize();
+          return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        const buildQuestionOrder = (quizMode) => {
+          const order = Array.from({ length: quizData.length }, (_, idx) => idx);
+          if (quizMode === "random") {
+            for (let i = order.length - 1; i > 0; i -= 1) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [order[i], order[j]] = [order[j], order[i]];
+            }
+          }
+          return order;
+        };
+
+        const startQuiz = (quizMode) => {
+          setMode(quizMode);
+          setQuestionOrder(buildQuestionOrder(quizMode));
+          setCurrent(0);
+          setAnswers({});
+          setSubmitted(false);
+          setStarted(true);
+        };
+
+        const handleOptionSelect = (optionIndex) => {
+          const currentQuestionId = questionOrder[current];
+          if (currentQuestionId === undefined || submitted || answers[currentQuestionId] !== undefined) return;
+          setAnswers((prev) => ({ ...prev, [currentQuestionId]: optionIndex }));
+        };
+
+        const calculateScore = () => {
+          let score = 0;
+          Object.keys(answers).forEach((key) => {
+            if (answers[key] === quizData[key].answer) score++;
+          });
+          return score;
+        };
+
+        const resetQuiz = () => {
+          setStarted(false);
+          setMode(null);
+          setQuestionOrder([]);
+          setCurrent(0);
+          setAnswers({});
+          setSubmitted(false);
+        };
+
+        if (!started) {
+          return (
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-slate-800">
+              <div className="bg-white p-10 rounded-2xl shadow-xl max-w-2xl w-full text-center">
+                <div className="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl">▶</div>
+                <h1 className="text-4xl font-extrabold mb-4 text-slate-900 tracking-tight">ESD Exam Prep</h1>
+                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                  Welcome to the ultimate practice test for Education for Sustainable Development.
+                  This quiz contains all 120 questions from your assignments. Good luck!
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => startQuiz("sequence")}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-full text-lg transition-all transform hover:scale-105 active:scale-95 shadow-md"
+                  >
+                    Start In Sequence
+                  </button>
+                  <button
+                    onClick={() => startQuiz("random")}
+                    className="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-4 px-6 rounded-full text-lg transition-all transform hover:scale-105 active:scale-95 shadow-md"
+                  >
+                    Start Random
+                  </button>
+                </div>
+                <div className="mt-8 pt-6 border-t border-slate-200 text-sm text-slate-600">
+                  <p className="font-medium">Made by {CREATOR_NAME}</p>
+                  <div className="mt-3 flex items-center justify-center gap-3">
+                    <a
+                      href={LINKEDIN_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors font-semibold"
+                    >
+                      LinkedIn
+                    </a>
+                    <a
+                      href={GITHUB_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-800 hover:bg-slate-200 transition-colors font-semibold"
+                    >
+                      GitHub
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
+        const currentQuestionId = questionOrder[current];
+        const question = quizData[currentQuestionId];
+        const answeredCount = Object.keys(answers).length;
+        const progress = (answeredCount / quizData.length) * 100;
+
+        return (
+          <div className="min-h-screen bg-slate-50 flex text-slate-800 font-sans">
+            {sidebarOpen && (
+              <div className="md:hidden fixed inset-0 bg-black/50 z-20" onClick={() => setSidebarOpen(false)} />
+            )}
+
+            <div className={`fixed md:sticky top-0 left-0 h-screen bg-white shadow-xl border-r border-slate-200 z-30 transition-transform duration-300 ease-in-out w-72 flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+              <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-indigo-600 text-white">
+                <h2 className="font-bold text-xl tracking-wide">Question Menu</h2>
+                <button onClick={() => setSidebarOpen(false)} className="md:hidden p-1 hover:bg-indigo-700 rounded-md">✕</button>
+              </div>
+
+              <div className="p-4 bg-slate-50 border-b border-slate-200 text-sm font-medium text-slate-500">
+                Progress: {answeredCount} / {quizData.length}
+                <div className="w-full bg-slate-200 h-2 mt-2 rounded-full overflow-hidden">
+                  <div className="bg-indigo-500 h-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                <div className="grid grid-cols-5 gap-2">
+                  {questionOrder.map((questionId, idx) => {
+                    let statusClass = "bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300";
+
+                    if (answers[questionId] !== undefined) {
+                      if (answers[questionId] === quizData[questionId].answer) {
+                        statusClass = "bg-emerald-100 border-emerald-500 text-emerald-700";
+                      } else {
+                        statusClass = "bg-rose-100 border-rose-500 text-rose-700";
+                      }
+                    } else if (submitted) {
+                      statusClass = "bg-slate-100 border-slate-300 text-slate-400";
+                    }
+
+                    if (current === idx) statusClass += " ring-2 ring-indigo-400 ring-offset-1";
+
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setCurrent(idx);
+                          if (window.innerWidth < 768) setSidebarOpen(false);
+                        }}
+                        className={`w-full aspect-square rounded-lg border flex items-center justify-center text-sm font-medium transition-colors ${statusClass}`}
+                      >
+                        {idx + 1}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {!submitted && (
+                <div className="p-4 border-t border-slate-200 bg-white">
+                  <button
+                    onClick={() => {
+                      if (window.confirm("Are you sure you want to finish the quiz and view your results?")) {
+                        setSubmitted(true);
+                        setCurrent(0);
+                      }
+                    }}
+                    className="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-xl transition-colors"
+                  >
+                    Finish & View Results
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+              <div className="bg-white px-6 py-4 border-b border-slate-200 flex items-center shadow-sm z-10 sticky top-0 shrink-0">
+                <button
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="md:hidden mr-4 p-2 bg-slate-100 text-slate-600 rounded-md hover:bg-slate-200 transition-colors"
+                >
+                  ☰
+                </button>
+                <h2 className="text-xl font-bold text-slate-800 truncate">ESD Master Quiz</h2>
+                <span className="ml-3 text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+                  {mode === "random" ? "Random" : "Sequence"}
+                </span>
+                <div className="ml-auto hidden md:flex items-center gap-2 text-sm">
+                  <span className="text-slate-500">Made by {CREATOR_NAME}</span>
+                  <a
+                    href={LINKEDIN_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold"
+                  >
+                    LinkedIn
+                  </a>
+                  <a
+                    href={GITHUB_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 hover:bg-slate-200 font-semibold"
+                  >
+                    GitHub
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto bg-slate-50 p-6 md:p-10 custom-scrollbar">
+                {submitted && current === 0 && (
+                  <div className="max-w-3xl mx-auto mb-10 bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center animate-fade-in">
+                    <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Quiz Results</h2>
+                    <div className="text-7xl font-black text-indigo-600 my-6">
+                      {calculateScore()} <span className="text-3xl text-slate-400">/ {quizData.length}</span>
+                    </div>
+                    <p className="text-lg text-slate-600 mb-8">
+                      You scored {((calculateScore() / quizData.length) * 100).toFixed(1)}%.
+                      {calculateScore() > 80 ? " Excellent work!" : " Keep practicing!"}
+                    </p>
+                    <button
+                      onClick={resetQuiz}
+                      className="inline-flex items-center px-6 py-3 bg-indigo-50 text-indigo-600 font-semibold rounded-xl hover:bg-indigo-100 transition-colors"
+                    >
+                      ↻ Take Again
+                    </button>
+                  </div>
+                )}
+
+                <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                  <div className="p-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <span className="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
+                        Question {current + 1} of {quizData.length}
+                      </span>
+                      {answers[currentQuestionId] !== undefined && (
+                        <span className={`text-sm font-bold flex items-center ${answers[currentQuestionId] === question.answer ? "text-emerald-600" : "text-rose-600"}`}>
+                          {answers[currentQuestionId] === question.answer ? "✓ Correct" : "✕ Incorrect"}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="text-xl md:text-2xl font-semibold text-slate-900 mb-8 leading-relaxed">{question.q}</h3>
+
+                    <div className="space-y-3">
+                      {question.options.map((option, idx) => {
+                        const isAnswered = answers[currentQuestionId] !== undefined;
+                        const isSelected = answers[currentQuestionId] === idx;
+                        const isCorrectAnswer = question.answer === idx;
+
+                        let optionClass = "border-slate-200 hover:border-indigo-300 hover:bg-slate-50 bg-white";
+                        let indicatorClass = "border-slate-300 text-transparent";
+
+                        if (isAnswered) {
+                          optionClass = "border-slate-200 bg-slate-50 opacity-60 cursor-default";
+                          if (isCorrectAnswer) {
+                            optionClass = "border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500";
+                            indicatorClass = "bg-emerald-500 border-emerald-500 text-white";
+                          } else if (isSelected && !isCorrectAnswer) {
+                            optionClass = "border-rose-500 bg-rose-50";
+                            indicatorClass = "bg-rose-500 border-rose-500 text-white";
+                          }
+                        }
+
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => handleOptionSelect(idx)}
+                            disabled={isAnswered || submitted}
+                            className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-start ${optionClass}`}
+                          >
+                            <div className={`shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5 mr-4 transition-colors ${indicatorClass}`}>
+                              {isAnswered && isCorrectAnswer && "✓"}
+                              {isAnswered && isSelected && !isCorrectAnswer && "✕"}
+                            </div>
+                            <span className="text-lg text-slate-700">{option}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50 px-8 py-5 border-t border-slate-200 flex justify-between items-center">
+                    <button
+                      onClick={() => setCurrent((prev) => Math.max(0, prev - 1))}
+                      disabled={current === 0}
+                      className="flex items-center text-slate-600 hover:text-indigo-600 font-semibold disabled:opacity-40 disabled:hover:text-slate-600 transition-colors"
+                    >
+                      ← Previous
+                    </button>
+
+                    <button
+                      onClick={() => setCurrent((prev) => Math.min(quizData.length - 1, prev + 1))}
+                      disabled={current === quizData.length - 1}
+                      className="flex items-center text-slate-600 hover:text-indigo-600 font-semibold disabled:opacity-40 disabled:hover:text-slate-600 transition-colors"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>
